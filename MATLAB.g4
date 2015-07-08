@@ -1,12 +1,19 @@
 grammar MATLAB;
 
 fileDecl  
-    : (functionDecl | classDecl)? functionDecl*
+    : (functionDecl | classDecl)? (functionDecl* | partialFunctionDecl*)
+    | partialFunctionDecl*
     | stat* // Script
     ;
 
+// Function declaration without the closing end
+partialFunctionDecl
+    : 'function' outArgs? ID inArgs? NL stat* 
+    ; 
+
+// Normal function declaration including closing end
 functionDecl
-    : 'function' outArgs? ID inArgs? NL stat* 'end' NL+
+    : partialFunctionDecl 'end' NL+
     ;
 
 classDecl

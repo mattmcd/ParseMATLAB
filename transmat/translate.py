@@ -3,12 +3,14 @@ from parse.MATLABLexer import MATLABLexer
 from parse.MATLABParser import MATLABParser
 from TranslateListener import TranslateListener
 from error.ErrorListener import ParseErrorExceptionListener
+from error.Errors import ParseError
 
-def main(argv):
+def translate(in_str):
 
-    input = "function y = foo(x)\n"
+    if in_str is None:
+        in_str = "function y = foo(x)\n"
 
-    chars = InputStream.InputStream(input)
+    chars = InputStream.InputStream(in_str)
     lexer = MATLABLexer(chars)
     tokens = CommonTokenStream(lexer)
     parser = MATLABParser(tokens)
@@ -20,9 +22,8 @@ def main(argv):
     except:
         pass
     # Throw if parse fails
-    parser.addErrorListener(ParseErrorExceptionListener())
+    parser.addErrorListener(ParseErrorExceptionListener.INSTANCE)
     errorDispatch = parser.getErrorListenerDispatch()
-    print errorDispatch.delegates
     tree = parser.fileDecl();
 
     # Actually do the walking
@@ -32,4 +33,9 @@ def main(argv):
 
 if __name__ == '__main__':
     import sys
-    main(sys.argv)
+    if len(sys.argv) > 1:
+        with open(sys.argv[1], 'r') as f:
+            in_str = f.read()
+    else:
+        in_str = None 
+    translate(in_str)
