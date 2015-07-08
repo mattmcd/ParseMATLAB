@@ -5,8 +5,7 @@ from TranslateListener import TranslateListener
 from error.ErrorListener import ParseErrorExceptionListener
 from error.Errors import ParseError
 
-def translate(in_str):
-
+def parse(in_str):
     if in_str is None:
         in_str = "function y = foo(x)\n"
 
@@ -24,7 +23,13 @@ def translate(in_str):
     # Throw if parse fails
     parser.addErrorListener(ParseErrorExceptionListener.INSTANCE)
     errorDispatch = parser.getErrorListenerDispatch()
-    tree = parser.fileDecl();
+    tree = parser.fileDecl()
+    return tree
+    
+
+def translate(tree=None, string=None):
+    if tree == None:
+        tree = parse(string)
 
     # Actually do the walking
     evaluator = TranslateListener();
@@ -38,4 +43,4 @@ if __name__ == '__main__':
             in_str = f.read()
     else:
         in_str = None 
-    translate(in_str)
+    translate(string= in_str)
