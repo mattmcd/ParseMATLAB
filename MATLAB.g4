@@ -16,7 +16,7 @@ endStatNL
 
 // Function declaration without the closing end
 partialFunctionDecl
-    : 'function' outArgs? ID inArgs? endStat stat* 
+    : 'function' outArgs? ID inArgs? endStat (stat endStat NL*)* 
     ; 
 
 // Normal function declaration including closing end
@@ -34,11 +34,11 @@ classDecl
     ;
 
 propBlockDecl
-    : 'properties' NL prop* 'end' endStat NL*
+    : 'properties' endStat NL* prop* 'end' endStat NL*
     ;
 
 methodBlockDecl
-    : 'methods' NL methodDecl* 'end' endStat NL*
+    : 'methods' endStat NL* methodDecl* 'end' endStat NL*
     ;
 
 outArgs
@@ -55,13 +55,25 @@ prop
     : ID ('=' expr)? endStat
     ;
 
+dotRef
+    : ID ('.' ID)*
+    ;
+
 stat
-    : ID
+    : dotRef '=' expr
+    | 'if' expr endStat (stat endStat NL*)* 
+      ('elseif' expr endStat (stat endStat NL*)*)* 
+      ('else' endStat (stat endStat NL*)*)* 
+      'end'
+    | ID
     | NL
     ;
 
 expr
-    : ID
+    : expr '==' expr
+    | expr ('>'|'<'|'>='|'<=') expr
+    | dotRef
+    | NUMBER
     ;
 
 fragment
@@ -81,3 +93,5 @@ LETTER
     : [a-zA-Z] ;
 
 ID  : LETTER (LETTER|DIGIT|'_')* ;
+
+NUMBER : DIGIT+ ;
