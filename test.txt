@@ -1,0 +1,16 @@
+classdef Foo
+  properties
+    A
+    B
+  end
+
+  methods
+    function obj = Foo()
+    end
+  end
+
+end
+
+function y=foo(x)
+  y
+end

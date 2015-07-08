@@ -6,26 +6,39 @@ fileDecl
     | stat* // Script
     ;
 
+endStat
+    : (NL|COMMA|SEMI)
+    ;
+
+endStatNL 
+    : NL
+    ;
+
 // Function declaration without the closing end
 partialFunctionDecl
-    : 'function' outArgs? ID inArgs? NL stat* 
+    : 'function' outArgs? ID inArgs? endStat stat* 
     ; 
 
 // Normal function declaration including closing end
 functionDecl
-    : partialFunctionDecl 'end' NL+
+    : partialFunctionDecl 'end' endStatNL NL*
+    ;
+
+// Functions inside method blocks can be comma or semi separated 
+methodDecl
+    : partialFunctionDecl 'end' endStat NL*
     ;
 
 classDecl
-    : 'classdef' ID NL (propDecl|methodDecl)* 'end' NL+
+    : 'classdef' ID endStat NL* (propBlockDecl|methodBlockDecl)* 'end' (EOF|endStat) NL*
     ;
 
-propDecl
-    : 'properties' NL prop* 'end' NL+
+propBlockDecl
+    : 'properties' NL prop* 'end' endStat NL*
     ;
 
-methodDecl
-    : 'methods' NL functionDecl* 'end' NL+
+methodBlockDecl
+    : 'methods' NL methodDecl* 'end' endStat NL*
     ;
 
 outArgs
@@ -39,7 +52,7 @@ inArgs
     ;
 
 prop
-    : ID ('=' expr)? NL
+    : ID ('=' expr)? endStat
     ;
 
 stat
@@ -58,6 +71,10 @@ DIGIT
 NL  : '\r'?'\n' ;
 
 WS  : [ \t]+ -> skip ;
+
+COMMA : ',' ;
+
+SEMI  : ';' ;
 
 fragment
 LETTER  
