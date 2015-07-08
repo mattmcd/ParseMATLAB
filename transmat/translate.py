@@ -2,7 +2,7 @@ from antlr4 import InputStream, CommonTokenStream, ParseTreeWalker
 from parse.MATLABLexer import MATLABLexer
 from parse.MATLABParser import MATLABParser
 from TranslateListener import TranslateListener
-from ParseErrorExceptionListener import ParseErrorExceptionListener
+from error.ErrorListener import ParseErrorExceptionListener
 
 def main(argv):
 
