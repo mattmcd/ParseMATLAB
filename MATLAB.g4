@@ -16,7 +16,7 @@ endStatNL
 
 // Function declaration without the closing end
 partialFunctionDecl
-    : 'function' outArgs? ID inArgs? endStat (stat endStat)* 
+    : 'function' outArgs? ID inArgs? endStat statBlock 
     ; 
 
 // Normal function declaration including closing end
@@ -30,7 +30,9 @@ methodDecl
     ;
 
 classDecl
-    : 'classdef' ID endStat (propBlockDecl|methodBlockDecl)* 'end' (EOF|endStat) NL*
+    : 'classdef' ID endStat 
+      (propBlockDecl|methodBlockDecl)* 
+      'end' (EOF|endStat) NL*
     ;
 
 propBlockDecl
@@ -59,18 +61,33 @@ dotRef
     : ID ('.' ID)*
     ;
 
+statBlock
+    : (stat endStat)*
+    ;
+
+ifStat
+    : 'if' expr endStat statBlock 
+      ('elseif' expr endStat statBlock)* 
+      ('else' endStat statBlock)?
+      'end'
+    ;
+
+whileStat
+    : 'while' expr endStat statBlock 'end'
+    ;
+
 stat
     : dotRef '=' expr
-    | 'if' expr endStat (stat endStat)* 
-      ('elseif' expr endStat (stat endStat)*)* 
-      ('else' endStat (stat endStat)*)* 
-      'end'
+    | ifStat
+    | whileStat
     | ID
     | NL
     ;
 
 expr
     : expr '==' expr
+    | expr ('*'|'.*'|'/'|'./'|'\\') expr
+    | expr ('+'|'-') expr
     | expr ('>'|'<'|'>='|'<=') expr
     | dotRef
     | NUMBER
