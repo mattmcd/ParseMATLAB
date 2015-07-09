@@ -76,12 +76,32 @@ whileStat
     : 'while' expr endStat statBlock 'end'
     ;
 
+caseStat
+    : 'switch' expr endStat 
+      ('case' expr endStat statBlock)*
+      ('otherwise' endStat statBlock)?
+      'end'
+    ;
+
 stat
     : dotRef '=' expr
     | ifStat
     | whileStat
+    | caseStat
     | ID
     | NL
+    ;
+
+arraySep
+    : (COMMA | SEMI)
+    ;
+
+arrayExpr
+    : '[' expr (arraySep expr)* ']'
+    ;
+
+cellExpr
+    : '{' expr (arraySep expr)* '}'
     ;
 
 expr
@@ -91,6 +111,10 @@ expr
     | expr ('>'|'<'|'>='|'<=') expr
     | dotRef
     | NUMBER
+    | STRING
+    | arrayExpr
+    | cellExpr
+    | '(' expr ')'
     ;
 
 fragment
@@ -112,3 +136,10 @@ LETTER
 ID  : LETTER (LETTER|DIGIT|'_')* ;
 
 NUMBER : DIGIT+ ;
+
+STRING
+    : '\'' (ESC|.)*? '\'' 
+    ;
+
+fragment
+ESC : '\'\'' ;
