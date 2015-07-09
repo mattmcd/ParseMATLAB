@@ -98,23 +98,36 @@ arraySep
 
 arrayExpr
     : '[' expr (arraySep expr)* ']'
+    | '[' ']'
     ;
 
 cellExpr
     : '{' expr (arraySep expr)* '}'
+    | '{' '}'
     ;
 
 expr
-    : expr '==' expr
-    | expr ('*'|'.*'|'/'|'./'|'\\') expr
+    : expr '(' exprList ')'
+    | expr ('\''|'.\''|'.^'|'^') expr
+    | ('+'|'-''~') expr
+    | expr ('*'|'.*'|'/'|'./'|'\\'|'.\\') expr
     | expr ('+'|'-') expr
-    | expr ('>'|'<'|'>='|'<=') expr
+    | expr ':' expr
+    | expr ('~'|'=='|'>'|'<'|'>='|'<=') expr
+    | expr '&' expr
+    | expr '|' expr
+    | expr '&&' expr
+    | expr '||' expr
     | dotRef
     | NUMBER
     | STRING
     | arrayExpr
     | cellExpr
     | '(' expr ')'
+    ;
+
+exprList
+    : expr (',' expr)*
     ;
 
 fragment
@@ -124,6 +137,12 @@ DIGIT
 NL  : '\r'?'\n' ;
 
 WS  : [ \t]+ -> skip ;
+
+LINECONTINUE
+    : '...' .*? NL -> skip ;
+
+COMMENT
+    : '%' .*? NL -> skip ;
 
 COMMA : ',' ;
 
