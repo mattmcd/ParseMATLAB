@@ -68,7 +68,7 @@ statBlock
 ifStat
     : 'if' expr endStat statBlock 
       ('elseif' expr endStat statBlock)* 
-      ('else' endStat statBlock)?
+      ('else' endStat? statBlock)?
       'end'
     ;
 
@@ -88,7 +88,7 @@ stat
     | ifStat
     | whileStat
     | caseStat
-    | ID
+    | expr 
     | NL
     ;
 
@@ -109,7 +109,7 @@ cellExpr
 expr
     : expr '(' exprList ')'
     | expr ('\''|'.\''|'.^'|'^') expr
-    | ('+'|'-''~') expr
+    | ('+'|'-'|'~') expr
     | expr ('*'|'.*'|'/'|'./'|'\\'|'.\\') expr
     | expr ('+'|'-') expr
     | expr ':' expr
@@ -162,3 +162,4 @@ STRING
 
 fragment
 ESC : '\'\'' ;
+
