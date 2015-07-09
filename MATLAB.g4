@@ -7,16 +7,16 @@ fileDecl
     ;
 
 endStat
-    : (NL|COMMA|SEMI)
+    : (NL|COMMA|SEMI) NL*
     ;
 
 endStatNL 
-    : NL
+    : NL+
     ;
 
 // Function declaration without the closing end
 partialFunctionDecl
-    : 'function' outArgs? ID inArgs? endStat (stat endStat NL*)* 
+    : 'function' outArgs? ID inArgs? endStat (stat endStat)* 
     ; 
 
 // Normal function declaration including closing end
@@ -26,19 +26,19 @@ functionDecl
 
 // Functions inside method blocks can be comma or semi separated 
 methodDecl
-    : partialFunctionDecl 'end' endStat NL*
+    : partialFunctionDecl 'end' endStat
     ;
 
 classDecl
-    : 'classdef' ID endStat NL* (propBlockDecl|methodBlockDecl)* 'end' (EOF|endStat) NL*
+    : 'classdef' ID endStat (propBlockDecl|methodBlockDecl)* 'end' (EOF|endStat) NL*
     ;
 
 propBlockDecl
-    : 'properties' endStat NL* prop* 'end' endStat NL*
+    : 'properties' endStat prop* 'end' endStat
     ;
 
 methodBlockDecl
-    : 'methods' endStat NL* methodDecl* 'end' endStat NL*
+    : 'methods' endStat methodDecl* 'end' endStat
     ;
 
 outArgs
@@ -61,9 +61,9 @@ dotRef
 
 stat
     : dotRef '=' expr
-    | 'if' expr endStat (stat endStat NL*)* 
-      ('elseif' expr endStat (stat endStat NL*)*)* 
-      ('else' endStat (stat endStat NL*)*)* 
+    | 'if' expr endStat (stat endStat)* 
+      ('elseif' expr endStat (stat endStat)*)* 
+      ('else' endStat (stat endStat)*)* 
       'end'
     | ID
     | NL
