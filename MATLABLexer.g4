@@ -56,13 +56,13 @@ LPAREN : '(' ;
 
 RPAREN : ')' ;
 
-LBRACE : '{' ;
+LBRACE : '{' WS* -> pushMode(CELLDEF) ;
 
-RBRACE : '}' ;
+// RBRACE : '}' ;
 
-LBRACK : '[' ;
+LBRACK : '[' WS* -> pushMode(ARRAYDEF) ;
 
-RBRACK : ']' ;
+// RBRACK : ']' ;
 
 MTIMES : '*' ;
 
@@ -85,10 +85,6 @@ NOT : '~' ;
 COLON : ':' ;
 
 // General rules
-fragment
-DIGIT   
-    : [0-9] ;
-
 NL  : '\r'?'\n' ;
 
 WS  : [ \t]+ -> skip ;
@@ -104,17 +100,36 @@ COMMA : ',' ;
 SEMI  : ';' ;
 
 fragment
-LETTER  
-    : [a-zA-Z] ;
-
-ID  : LETTER (LETTER|DIGIT|'_')* ;
-
-NUMBER : DIGIT+ ;
-
-STRING
-    : '\'' (ESC|.)*? '\'' 
-    ;
-
+LETTER  : [a-zA-Z] ; 
+fragment
+DIGIT   : [0-9] ; 
 fragment
 ESC : '\'\'' ;
 
+NUMBER : DIGIT+ ;
+ID  : LETTER (LETTER|DIGIT|'_')* ;
+STRING : '\'' (ESC|.)*? '\'' ;
+
+mode ARRAYDEF;
+RBRACK : ']' -> popMode;
+
+ARRAYCOMMENT 
+    : ('%'|'...') [^\r\n]* -> skip;
+
+ARRAYELSEP : ([,; ]|NL) ARRAYWS* ;
+
+ARRAYWS : [ \t\r\n]+ ;
+
+ARRAYEL : [^\]]+ ;
+
+mode CELLDEF;
+RBRACE : '}' -> popMode;
+
+CELLCOMMENT 
+    : ('%'|'...') [^\r\n]* -> skip;
+
+CELLELSEP : ([,; ]|NL) CELLWS* ;
+
+CELLWS : [ \t\r\n]+ ;
+
+CELLEL : [^}]+ ;

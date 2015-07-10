@@ -4,8 +4,9 @@ options { tokenVocab=MATLABLexer;}
 
 fileDecl  
     : (functionDecl | classDecl)? (functionDecl* | partialFunctionDecl*)
-    | partialFunctionDecl*
-    | stat* // Script
+    | partialFunctionDecl+
+    | statBlock+ // Script
+    | EOF
     ;
 
 endStat
@@ -18,7 +19,7 @@ endStatNL
 
 // Function declaration without the closing end
 partialFunctionDecl
-    : FUNCTION outArgs? ID inArgs? endStat statBlock 
+    : FUNCTION outArgs? ID inArgs? endStat statBlock* 
     ; 
 
 // Normal function declaration including closing end
@@ -47,11 +48,11 @@ methodBlockDecl
 
 outArgs
     : ID EQUALS
-    | LBRACK ID (',' ID)* RBRACK EQUALS
+    | LBRACK ID (COMMA ID)* RBRACK EQUALS
     ;
 
 inArgs
-    : LPAREN ID (',' ID)* RPAREN
+    : LPAREN ID (COMMA ID)* RPAREN
     | LPAREN RPAREN
     ;
 
@@ -64,24 +65,24 @@ dotRef
     ;
 
 statBlock
-    : (stat endStat)*
+    : (stat endStat)
     ;
 
 ifStat
-    : IF expr endStat statBlock 
-      (ELSEIF expr endStat statBlock)* 
-      (ELSE endStat? statBlock)?
+    : IF expr endStat statBlock* 
+      (ELSEIF expr endStat statBlock*)* 
+      (ELSE endStat? statBlock*)?
       END
     ;
 
 whileStat
-    : WHILE expr endStat statBlock END
+    : WHILE expr endStat statBlock* END
     ;
 
 caseStat
     : SWITCH expr endStat 
-      (CASE expr endStat statBlock)*
-      (OTHERWISE endStat statBlock)?
+      (CASE expr endStat statBlock*)*
+      (OTHERWISE endStat statBlock*)?
       END
     ;
 
@@ -94,17 +95,17 @@ stat
     | NL
     ;
 
-arraySep
-    : (COMMA | SEMI)
-    ;
+// arraySep
+//     : (COMMA | SEMI)
+//     ;
 
 arrayExpr
-    : LBRACK expr (arraySep expr)* RBRACK
+    : LBRACK expr (ARRAYELSEP expr)* RBRACK
     | LBRACK RBRACK
     ;
 
 cellExpr
-    : LBRACE expr (arraySep expr)* RBRACE
+    : LBRACE expr (CELLELSEP expr)* RBRACE
     | LBRACE RBRACE
     ;
 
@@ -123,6 +124,8 @@ expr
     | dotRef
     | NUMBER
     | STRING
+    | ARRAYEL
+    | CELLEL
     | arrayExpr
     | cellExpr
     | LPAREN expr RPAREN
