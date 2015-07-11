@@ -5,7 +5,7 @@ switch x
         y=1;
     case 'a'
         y = 2;
-    case {'b', 'c'}
+    case {'b','c'}
         y = 3;
     otherwise
         y = 4;

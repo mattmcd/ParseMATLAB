@@ -95,23 +95,20 @@ stat
     | NL
     ;
 
-// arraySep
-//     : (COMMA | SEMI)
-//     ;
-
 arrayExpr
-    : LBRACK expr (ARRAYELSEP expr)* RBRACK
+    : LBRACK exprArrayList RBRACK
     | LBRACK RBRACK
     ;
 
 cellExpr
-    : LBRACE expr (CELLELSEP expr)* RBRACE
+    : LBRACE exprArrayList RBRACE
     | LBRACE RBRACE
     ;
 
 expr
     : expr LPAREN exprList RPAREN
-    | expr (LDIVIDE|MLDIVIDE|MPOW|POW) expr
+    | expr (TRANS|CTRANS)
+    | expr (MPOW|POW) expr
     | (PLUS|MINUS|NOT) expr
     | expr (MTIMES|TIMES|MLDIVIDE|LDIVIDE|MRDIVIDE|RDIVIDE) expr
     | expr (PLUS|MINUS) expr
@@ -124,8 +121,6 @@ expr
     | dotRef
     | NUMBER
     | STRING
-    | ARRAYEL
-    | CELLEL
     | arrayExpr
     | cellExpr
     | LPAREN expr RPAREN
@@ -133,4 +128,8 @@ expr
 
 exprList
     : expr (',' expr)*
+    ;
+
+exprArrayList
+    : expr ((COMMA|SEMI|NL)? expr)*
     ;

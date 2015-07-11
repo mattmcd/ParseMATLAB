@@ -25,7 +25,7 @@ clean:
 grun= java -cp java:$$CLASSPATH org.antlr.v4.runtime.misc.TestRig
 .PHONY: test
 test: java/MATLABParser.class
-	$(grun) MATLABParser fileDecl -tokens test.txt
+	$(grun) MATLAB fileDecl -gui test/parse_pass/test_array.m
 
 testpy:
 	python transmat/translate.py
