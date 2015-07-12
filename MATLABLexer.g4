@@ -91,11 +91,12 @@ CTRANS : '\'' ;
 // General rules
 NL  : '\r'?'\n' ;
 
+fragment
 LINECONTINUE
-    : '...' .*? NL -> skip ;
+    : '...' ;
 
 COMMENT
-    : '%' .*? NL -> skip ;
+    : ('%' | LINECONTINUE) .*? NL -> skip ;
 
 fragment
 LETTER  : [a-zA-Z] ; 

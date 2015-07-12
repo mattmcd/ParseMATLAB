@@ -131,5 +131,6 @@ exprList
     ;
 
 exprArrayList
-    : expr ((COMMA|SEMI|NL)? expr)*
+    : expr (COMMA? exprArrayList)*    #hcat
+    | expr ((SEMI|NL) exprArrayList)* #vcat
     ;
