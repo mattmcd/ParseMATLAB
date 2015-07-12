@@ -105,7 +105,14 @@ DIGIT   : [0-9] ;
 fragment
 ESC : '\'\'' ;
 
-NUMBER : DIGIT+ ;
+INT : DIGIT+;
+
+FLOAT : DIGIT+ '.' DIGIT*
+      | '.' DIGIT+
+      ;
+
+SCI : (INT|FLOAT) 'e' INT ;
+
 ID  : LETTER (LETTER|DIGIT|'_')* ;
 STRING : '\'' (ESC|.)*? '\'' ;
 

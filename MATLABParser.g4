@@ -119,7 +119,7 @@ expr
     | expr SCALAND expr
     | expr SCALOR expr
     | dotRef
-    | NUMBER
+    | INT | FLOAT | SCI  
     | STRING
     | arrayExpr
     | cellExpr
